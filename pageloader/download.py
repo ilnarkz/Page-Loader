@@ -27,6 +27,9 @@ def download_url(link, path=os.getcwd()):
         raise KnownError() from e
     downloaded_url_name = get_html_file(link)
     file_path = os.path.join(path, downloaded_url_name)
+    dir_for_files = get_dir_name(file_path)
+    if not os.path.exists(dir_for_files):
+        os.mkdir(dir_for_files)
     response = get_response(link)
     try:
         with open(file_path, 'wb') as f:
@@ -37,15 +40,12 @@ def download_url(link, path=os.getcwd()):
     except OSError as error2:
         logger.error(f"Can't open file {file_path}")
         raise KnownError() from error2
-    download_data(link, file_path)
+    download_data(link, file_path, dir_for_files)
     logger.info(f'Webpage was downloaded as {file_path}')
     return file_path
 
 
-def download_data(link, file_path):
-    dir_for_files = get_dir_name(file_path)
-    if not os.path.exists(dir_for_files):
-        os.mkdir(dir_for_files)
+def download_data(link, file_path, dir_for_files):
     response = requests.get(link)
     url = urlparse(link)
     soup = BeautifulSoup(response.text, 'html.parser')
