@@ -1,7 +1,10 @@
+import logging
 import os
 import tempfile
 import pytest
 import requests_mock
+from pageloader.known_error import KnownError
+
 from pageloader.download import download_url
 
 
@@ -44,3 +47,11 @@ def test_save_file(received, expected):
             received_png = os.path.join(temp_dir, PNG_ASSETS)
             assert read_file(received_file) == read_file(expected)
             assert read_file(received_png, 'rb') == read_file(PNG, 'rb')
+
+
+def test_errors():
+    with requests_mock.Mocker() as m:
+        m.get(URL, exc=KnownError)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with pytest.raises(KnownError):
+                download_url(URL, temp_dir)
