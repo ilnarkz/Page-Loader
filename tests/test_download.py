@@ -4,7 +4,7 @@ import pytest
 import requests_mock
 from page_loader.known_error import KnownError
 
-from page_loader.download import download
+from page_loader.download_data import download
 
 
 URL = 'https://ru.hexlet.io/courses'
