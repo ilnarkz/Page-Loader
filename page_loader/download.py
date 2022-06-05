@@ -17,7 +17,7 @@ tags = {'link': 'href',
         'script': 'src'}
 
 
-def download_url(link: str, path: str = os.getcwd()) -> str:
+def download(link: str, path: str = os.getcwd()) -> str:
     logger.info(f'Requested url {link}')
     logger.info(f'Output path {path}')
     try:

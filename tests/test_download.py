@@ -4,7 +4,7 @@ import pytest
 import requests_mock
 from page_loader.known_error import KnownError
 
-from page_loader.download import download_url
+from page_loader.download import download
 
 
 URL = 'https://ru.hexlet.io/courses'
@@ -41,7 +41,7 @@ def test_save_file(received, expected):
         m.get(CSS_URL, text=read_file(CSS))
         m.get(JS_URL, text=read_file(JS))
         with tempfile.TemporaryDirectory() as temp_dir:
-            download_url(URL, temp_dir)
+            download(URL, temp_dir)
             received_file = os.path.join(temp_dir, received)
             received_png = os.path.join(temp_dir, PNG_ASSETS)
             assert read_file(received_file) == read_file(expected)
@@ -53,4 +53,4 @@ def test_errors():
         m.get(URL, exc=KnownError)
         with tempfile.TemporaryDirectory() as temp_dir:
             with pytest.raises(KnownError):
-                download_url(URL, temp_dir)
+                download(URL, temp_dir)

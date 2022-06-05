@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-from page_loader.download import download_url
+from page_loader.download import download
 from page_loader.known_error import KnownError
 
 
@@ -13,7 +13,7 @@ def main():
                         default=os.getcwd())
     args = parser.parse_args()
     try:
-        print(download_url(args.url_page, args.output))
+        print(download(args.url_page, args.output))
     except KnownError:
         sys.exit(1)
 
