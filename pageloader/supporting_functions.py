@@ -1,19 +1,17 @@
 import os
 import re
+from typing import Union, Optional, Any
 from urllib.parse import urlparse
 
 import requests
+from requests import Response
 
 
-def get_name(link):
+def get_name(link: str) -> str:
     return re.sub(r'[\W_]', '-', link)
 
 
-def get_response(link):
-    return requests.get(link)
-
-
-def get_html_file(link):
+def get_html_file(link: str) -> str:
     link_name, link_extension = os.path.splitext(link)
     if link_extension != '.html':
         link_name += link_extension
@@ -21,12 +19,12 @@ def get_html_file(link):
     return get_name(f'{url.netloc}{url.path}') + '.html'
 
 
-def get_dir_name(file_path):
+def get_dir_name(file_path: str) -> str:
     link_name, link_extension = os.path.splitext(file_path)
     return link_name + '_files'
 
 
-def get_resource_full_name(link, item, value_tag):
+def get_resource_full_name(link: str, item, value_tag: str) -> Union[Optional[str], Any]:
     url = urlparse(link)
     if not item.has_attr(value_tag):
         return None
@@ -43,9 +41,13 @@ def get_resource_full_name(link, item, value_tag):
     return item_full_name
 
 
-def get_content(path, data):
+def get_content(path: str, data: Union[str, bytes]) -> None:
     mode = 'w'
     if isinstance(data, bytes):
         mode = 'wb'
     with open(path, mode) as tag_content:
         tag_content.write(data)
+
+
+def get_response(link: str) -> Response:
+    return requests.get(link)
