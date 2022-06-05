@@ -2,10 +2,10 @@ import logging
 import os
 from urllib.parse import urlparse, urljoin
 import requests
-from pageloader.known_error import KnownError
+from page_loader.known_error import KnownError
 from progress.bar import ChargingBar
 from bs4 import BeautifulSoup
-from pageloader.supporting_functions import get_name, get_dir_name, get_content, get_html_file, \
+from page_loader.supporting_functions import get_name, get_dir_name, get_content, get_html_file, \
     get_resource_full_name, get_response
 
 logging.basicConfig(level=logging.INFO)

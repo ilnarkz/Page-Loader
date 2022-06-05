@@ -1,14 +1,14 @@
 install:
 	poetry install
 lint:
-	poetry run flake8 pageloader
+	poetry run flake8 page_loader
 test:
 	poetry run pytest
 selfcheck:
 	poetry check
 check: selfcheck test lint
 test-coverage:
-	poetry run pytest --cov=pageloader --cov-report xml tests/
+	poetry run pytest --cov=page_loader --cov-report xml tests/
 build:
 	rm -rf dist
 	poetry build

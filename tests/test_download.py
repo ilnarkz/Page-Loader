@@ -2,9 +2,9 @@ import os
 import tempfile
 import pytest
 import requests_mock
-from pageloader.known_error import KnownError
+from page_loader.known_error import KnownError
 
-from pageloader.download import download_url
+from page_loader.download import download_url
 
 
 URL = 'https://ru.hexlet.io/courses'

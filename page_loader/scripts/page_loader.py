@@ -1,8 +1,8 @@
 import argparse
 import os
 import sys
-from pageloader.download import download_url
-from pageloader.known_error import KnownError
+from page_loader.download import download_url
+from page_loader.known_error import KnownError
 
 
 def main():

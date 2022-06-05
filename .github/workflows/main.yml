@@ -1,4 +1,4 @@
-name: pageloader
+name: page_loader
 
 on: [push]
 
