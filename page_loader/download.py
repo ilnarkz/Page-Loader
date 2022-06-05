@@ -1,7 +1,7 @@
 import logging
 import os
-from urllib.parse import urlparse, urljoin
 import requests
+from urllib.parse import urlparse, urljoin
 from page_loader.known_error import KnownError
 from progress.bar import ChargingBar
 from bs4 import BeautifulSoup
