@@ -11,13 +11,14 @@ packages = [
 python = "^3.8"
 requests = "^2.27.1"
 bs4 = "^0.0.1"
+progress = "^1.6"
+
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
 flake8 = "^4.0.1"
 pytest-cov = "^3.0.0"
 requests_mock = "^1.9.3"
-progress = "^1.6"
 
 [tool.poetry.scripts]
 page-loader = 'page_loader.scripts.page_loader:main'
