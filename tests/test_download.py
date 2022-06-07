@@ -53,5 +53,8 @@ def test_errors():
         with tempfile.TemporaryDirectory() as temp_dir:
             with pytest.raises(KnownError):
                 download(URL, temp_dir)
-        with pytest.raises(KnownError):
-            download(URL, '/notExistsPath')
+
+
+def test_not_exists_path():
+    with pytest.raises(KnownError):
+        download(URL, '/notExistsPath')

@@ -21,6 +21,10 @@ tags = {'link': 'href',
 
 
 def download(link: str, path: str = os.getcwd()) -> str:
+    """
+
+    :rtype: object
+    """
     logger.info(f'Requested url {link}')
     logger.info(f'Output path {path}')
     try:
