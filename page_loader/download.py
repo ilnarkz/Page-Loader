@@ -32,7 +32,7 @@ def download(link: str, path: str = os.getcwd()) -> str:
         with open(file_path, 'wb') as f:
             f.write(response.content)
     except requests.ConnectionError as error1:
-        logger.error(f"Download failed! Status code: {get_response(link).status_code}")
+        logger.error("Download failed!")
         raise KnownError() from error1
     except OSError as error2:
         logger.error(f"Can't open file {file_path}")

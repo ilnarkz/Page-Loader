@@ -1,8 +1,10 @@
 import os
 import tempfile
+from http import HTTPStatus
 from urllib.parse import urljoin
 
 import pytest
+import requests
 import requests_mock
 from page_loader.known_error import KnownError
 from page_loader.download import download
@@ -49,11 +51,9 @@ def test_save_file(received, expected):
             assert read_file(received_png, 'rb') == read_file(PNG, 'rb')
 
 
-@pytest.mark.parametrize('code', [404, 500])
-def test_errors(code):
-    url = urljoin(URL, str(code))
+def test_errors():
     with requests_mock.Mocker() as m:
-        m.get(url, status_code=code)
+        m.get(URL, exc=requests.ConnectionError)
         with tempfile.TemporaryDirectory() as temp_dir:
-            with pytest.raises(Exception):
-                assert not download(url, temp_dir)
+            with pytest.raises(KnownError):
+                download(URL, temp_dir)
