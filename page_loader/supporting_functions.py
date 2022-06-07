@@ -3,6 +3,7 @@ import re
 from typing import Union, Optional, Any
 from urllib.parse import urlparse
 
+import bs4.element
 import requests
 from requests import Response
 
@@ -24,7 +25,7 @@ def get_dir_name(file_path: str) -> str:
     return link_name + '_files'
 
 
-def get_resource_full_name(link: str, item, value_tag: str) -> Union[Optional[str], Any]:
+def get_resource_full_name(link: str, item: bs4.element.Tag, value_tag: str) -> Union[Optional[str], Any]:
     url = urlparse(link)
     if not item.has_attr(value_tag):
         return None
