@@ -24,12 +24,12 @@ def download(link: str, path: str = os.getcwd()) -> str:
     logger.info(f'Requested url {link}')
     logger.info(f'Output path {path}')
     try:
-        os.makedirs(path, exist_ok=True)
+        os.makedirs(path)
     except PermissionError as e:
         logger.error(f"Can't create directory {path}. Invalid path")
         raise KnownError() from e
-    except FileNotFoundError as err:
-        logger.error(f"Not exists path {path}")
+    except OSError as err:
+        logger.error(f"Unable to make directory: {path}")
         raise KnownError() from err
     downloaded_url_name = get_html_file(link)
     file_path = os.path.join(path, downloaded_url_name)
