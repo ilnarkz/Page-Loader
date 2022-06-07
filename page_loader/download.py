@@ -72,7 +72,7 @@ def download_data(link: str, file_path: str) -> None:
                 response_tag = get_response(tag_link)
                 try:
                     get_content(abs_path, response_tag.content)
-                except OSError as e:
+                except Exception as e:
                     logger.error(f"Can't open file {abs_path}")
                     raise KnownError() from e
                 item[value_tag] = relative_path
