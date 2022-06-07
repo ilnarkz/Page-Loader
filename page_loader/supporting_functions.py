@@ -2,7 +2,6 @@ import os
 import re
 from typing import Union, Optional, Any
 from urllib.parse import urlparse
-
 import bs4.element
 import requests
 from requests import Response

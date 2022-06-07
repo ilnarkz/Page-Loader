@@ -27,12 +27,12 @@ def download(link: str, path: str = os.getcwd()) -> str:
         raise KnownError() from e
     downloaded_url_name = get_html_file(link)
     file_path = os.path.join(path, downloaded_url_name)
-    response = get_response(link)
     try:
+        response = get_response(link)
         with open(file_path, 'wb') as f:
             f.write(response.content)
     except ConnectionError as error1:
-        logger.error(f"Download failed: status code {response.status_code}")
+        logger.error(f"Download failed!")
         raise KnownError() from error1
     except OSError as error2:
         logger.error(f"Can't open file {file_path}")

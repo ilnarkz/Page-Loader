@@ -14,7 +14,7 @@ def main():
     args = parser.parse_args()
     try:
         download(args.url_page, args.output)
-    except KnownError():
+    except KnownError:
         sys.exit(1)
 
 
