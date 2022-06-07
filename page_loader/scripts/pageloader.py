@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-from page_loader.download import download
+from page_loader.download_data import download
 from page_loader.known_error import KnownError
 
 
