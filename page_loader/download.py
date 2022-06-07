@@ -28,8 +28,11 @@ def download(link: str, path: str = os.getcwd()) -> str:
     except PermissionError as e:
         logger.error(f"Can't create directory {path}. Invalid path")
         raise KnownError() from e
-    except (OSError, IOError) as err:
-        logger.error(f"Unable to make directory: {path}")
+    except FileNotFoundError as not_path:
+        logger.error(f"No such path {path}. Invalid path")
+        raise KnownError() from not_path
+    except OSError as err:
+        logger.error(f"Unable to make directory: {path}. This directory already exists")
         raise KnownError() from err
     downloaded_url_name = get_html_file(link)
     file_path = os.path.join(path, downloaded_url_name)
@@ -72,7 +75,7 @@ def download_data(link: str, file_path: str) -> None:
                 response_tag = get_response(tag_link)
                 try:
                     get_content(abs_path, response_tag.content)
-                except Exception as e:
+                except OSError as e:
                     logger.error(f"Can't open file {abs_path}")
                     raise KnownError() from e
                 item[value_tag] = relative_path
