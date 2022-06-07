@@ -53,7 +53,7 @@ def test_save_file(received, expected):
 def test_errors(code):
     url = urljoin(URL, str(code))
     with requests_mock.Mocker() as m:
-        m.get(url, status_code=code)
+        m.get(url, exc=KnownError)
         with tempfile.TemporaryDirectory() as temp_dir:
-            with pytest.raises(Exception):
-                download(URL, temp_dir)
+            with pytest.raises(KnownError):
+                download(url, temp_dir)
