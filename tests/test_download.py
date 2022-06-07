@@ -49,9 +49,11 @@ def test_save_file(received, expected):
             assert read_file(received_png, 'rb') == read_file(PNG, 'rb')
 
 
-def test_errors():
+@pytest.mark.parametrize('code', [404, 500])
+def test_errors(code):
+    url = urljoin(URL, str(code))
     with requests_mock.Mocker() as m:
-        m.get(URL, exc=KnownError)
+        m.get(url, status_code=code)
         with tempfile.TemporaryDirectory() as temp_dir:
-            with pytest.raises(KnownError):
-                download(URL, temp_dir)
+            with pytest.raises(Exception):
+                assert not download(url, temp_dir)
