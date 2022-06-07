@@ -21,10 +21,6 @@ tags = {'link': 'href',
 
 
 def download(link: str, path: str = os.getcwd()) -> str:
-    """
-
-    :rtype: object
-    """
     logger.info(f'Requested url {link}')
     logger.info(f'Output path {path}')
     try:
@@ -32,11 +28,8 @@ def download(link: str, path: str = os.getcwd()) -> str:
     except PermissionError as e:
         logger.error(f"Can't create directory {path}. Invalid path")
         raise KnownError() from e
-    except FileNotFoundError as not_path:
-        logger.error(f"No such path {path}. Invalid path")
-        raise KnownError() from not_path
     except OSError as err:
-        logger.error(f"Unable to make directory: {path}. This directory already exists")
+        logger.error(f"Unable to make directory: {path}")
         raise KnownError() from err
     downloaded_url_name = get_html_file(link)
     file_path = os.path.join(path, downloaded_url_name)
@@ -58,8 +51,11 @@ def download(link: str, path: str = os.getcwd()) -> str:
 
 def download_data(link: str, file_path: str) -> None:
     dir_for_files = get_dir_name(file_path)
-    if not os.path.exists(dir_for_files):
+    try:
         os.mkdir(dir_for_files)
+    except OSError as err:
+        logging.error(f"Can't create directory {dir_for_files}")
+        raise KnownError() from err
     response = requests.get(link)
     url = urlparse(link)
     soup = BeautifulSoup(response.text, 'html.parser')
