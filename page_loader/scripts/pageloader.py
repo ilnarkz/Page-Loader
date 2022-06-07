@@ -13,8 +13,8 @@ def main():
                         default=os.getcwd())
     args = parser.parse_args()
     try:
-        print(download(args.url_page, args.output))
-    except KnownError:
+        download(args.url_page, args.output)
+    except KnownError():
         sys.exit(1)
 
 

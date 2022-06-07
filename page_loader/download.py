@@ -67,7 +67,7 @@ def download_data(link: str, file_path: str) -> None:
                     get_content(abs_path, response_tag.content)
                 except OSError as e:
                     logger.error(f"Can't open file {abs_path}")
-                    raise KnownError from e
+                    raise KnownError() from e
                 item[value_tag] = relative_path
             bar.finish()
         f.write(soup.prettify())

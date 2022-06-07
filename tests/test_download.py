@@ -54,4 +54,4 @@ def test_errors():
         m.get(URL, exc=KnownError)
         with tempfile.TemporaryDirectory() as temp_dir:
             with pytest.raises(KnownError):
-                assert not download(URL, temp_dir)
+                download(URL, temp_dir)
