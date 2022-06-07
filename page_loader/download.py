@@ -2,6 +2,9 @@ import logging
 import os
 import requests
 from urllib.parse import urlparse, urljoin
+
+from requests import HTTPError, ConnectionError
+
 from page_loader.known_error import KnownError
 from progress.bar import ChargingBar
 from bs4 import BeautifulSoup
@@ -27,12 +30,13 @@ def download(link: str, path: str = os.getcwd()) -> str:
         raise KnownError() from e
     downloaded_url_name = get_html_file(link)
     file_path = os.path.join(path, downloaded_url_name)
+    response = get_response(link)
     try:
-        response = get_response(link)
+        response.raise_for_status()
         with open(file_path, 'wb') as f:
             f.write(response.content)
-    except requests.ConnectionError as error1:
-        logger.error("Download failed!")
+    except (HTTPError, ConnectionError) as error1:
+        logger.error(f"Download failed! Status code: {response.status_code}")
         raise KnownError() from error1
     except OSError as error2:
         logger.error(f"Can't open file {file_path}")
