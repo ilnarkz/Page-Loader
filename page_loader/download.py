@@ -63,6 +63,8 @@ def download_data(link: str, file_path: str) -> None:
     with open(file_path, 'r+') as f:
         for key_tag, value_tag in tags.items():
             items = soup.find_all(key_tag)
+            if not items:
+                return None
             bar = ChargingBar(f'Downloading {key_tag}', max=len(items))
             for item in items:
                 bar.next()
