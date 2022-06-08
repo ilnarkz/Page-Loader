@@ -49,9 +49,14 @@ def test_save_file(received, expected):
 
 def test_errors():
     with requests_mock.Mocker() as m:
-        m.get(URL, text='KnownError')
+        m.get(URL, exc=KnownError)
         with tempfile.TemporaryDirectory() as temp_dir:
             with pytest.raises(KnownError):
                 download(URL, temp_dir)
+
+
+def test_not_exists_path():
+    with requests_mock.Mocker() as m:
+        m.get(URL, text='KnownError')
         with pytest.raises(KnownError):
             download(URL, 'not/Exists/Path')
