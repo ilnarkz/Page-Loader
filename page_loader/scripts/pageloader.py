@@ -14,7 +14,7 @@ def main():
                         default=os.getcwd())
     args = parser.parse_args()
     try:
-        download(args.url_page, args.output)
+        print(download(args.url_page, args.output))
     except KnownError:
         sys.exit(1)
 
