@@ -33,13 +33,13 @@ def read_file(file_path, mode='r'):
                                                 (CSS_ASSETS, CSS),
                                                 (INNER_HTML_ASSETS, INNER_LINK)])
 def test_save_file(received, expected):
-    with tempfile.TemporaryDirectory() as temp_dir:
-        with requests_mock.Mocker() as m:
-            m.get(URL, text=read_file(PAGE))
-            m.get(URL, text=read_file(INNER_LINK))
-            m.get(PNG_URL, content=read_file(PNG, 'rb'))
-            m.get(CSS_URL, text=read_file(CSS))
-            m.get(JS_URL, text=read_file(JS))
+    with requests_mock.Mocker() as m:
+        m.get(URL, text=read_file(PAGE))
+        m.get(URL, text=read_file(INNER_LINK))
+        m.get(PNG_URL, content=read_file(PNG, 'rb'))
+        m.get(CSS_URL, text=read_file(CSS))
+        m.get(JS_URL, text=read_file(JS))
+        with tempfile.TemporaryDirectory() as temp_dir:
             download(URL, temp_dir)
             received_file = os.path.join(temp_dir, received)
             received_png = os.path.join(temp_dir, PNG_ASSETS)
