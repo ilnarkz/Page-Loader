@@ -8,7 +8,8 @@ from page_loader.known_error import KnownError
 def main():
     parser = argparse.ArgumentParser(description='Page Loader')
     parser.add_argument('url_page')
-    parser.add_argument('--output',
+    parser.add_argument('-o',
+                        '--output',
                         help='get current directory',
                         default=os.getcwd())
     args = parser.parse_args()
