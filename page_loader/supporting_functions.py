@@ -7,6 +7,11 @@ import requests
 from requests import Response
 
 
+tags = {'link': 'href',
+        'img': 'src',
+        'script': 'src'}
+
+
 def get_name(link: str) -> str:
     return re.sub(r'[\W_]', '-', link)
 
@@ -24,8 +29,9 @@ def get_dir_name(file_path: str) -> str:
     return link_name + '_files'
 
 
-def get_resource_full_name(link: str, item: bs4.element.Tag, value_tag: str) -> Union[Optional[str], Any]:
+def get_resource_full_name(link: str, item: bs4.element.Tag) -> Union[Optional[str], Any]:
     url = urlparse(link)
+    value_tag = tags[item.name]
     if not item.has_attr(value_tag):
         return None
     item_name, item_extension = os.path.splitext(item[value_tag])
@@ -41,7 +47,7 @@ def get_resource_full_name(link: str, item: bs4.element.Tag, value_tag: str) -> 
     return item_full_name
 
 
-def get_content(path: str, data: Union[str, bytes]) -> None:
+def download_content(path: str, data: Union[str, bytes]) -> None:
     mode = 'w'
     if isinstance(data, bytes):
         mode = 'wb'
