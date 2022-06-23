@@ -1,15 +1,12 @@
 import logging
 import os
-import bs4
+from typing import List, Tuple
 import requests
-from urllib.parse import urlparse, urljoin
 from requests import HTTPError, ConnectionError
 from page_loader.known_error import KnownError
 from progress.bar import ChargingBar
-from bs4 import BeautifulSoup
-from page_loader.supporting_functions import get_name, get_dir_name, download_content, get_html_file, \
-    get_resource_full_name, get_response, tags
-
+from page_loader.supporting_functions import get_html_file, \
+    create_dir, save_page, parse_page
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -20,61 +17,36 @@ def download(link: str, path: str = os.getcwd()) -> str:
     logger.info(f'Output path {path}')
     downloaded_url_name = get_html_file(link)
     file_path = os.path.join(path, downloaded_url_name)
-    download_page(link, file_path)
-    download_data(link, file_path)
+    dir_for_files = create_dir(file_path)
+    page = download_page(link)
+    parsed_page, resources_links = parse_page(page, link, dir_for_files)
+    save_page(parsed_page, file_path)
+    logger.info(f'Downloading resources to {dir_for_files}')
+    download_data(resources_links)
     logger.info(f'Webpage was downloaded as {file_path}')
     return file_path
 
 
-def download_page(link, file_path):
-    response = get_response(link)
+def download_data(resources_links: List[Tuple[str, str]]) -> None:
+    bar = ChargingBar('Downloading resources', max=len(resources_links))
+    for resource in resources_links:
+        bar.next()
+        link, path = resource
+        response = requests.get(link)
+        try:
+            with open(path, 'wb') as f:
+                f.write(response.content)
+        except OSError as e:
+            logger.error(f"Can't open file {path}")
+            raise KnownError() from e
+    bar.finish()
+
+
+def download_page(link):
+    response = requests.get(link)
     try:
         response.raise_for_status()
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
     except (HTTPError, ConnectionError) as error1:
         logger.error(f"Download failed! Status code: {response.status_code}")
         raise KnownError() from error1
-    except OSError as error2:
-        logger.error(f"Can't open file {file_path}")
-        raise KnownError() from error2
-
-
-def download_data(link: str, file_path: str) -> None:
-    dir_for_files = get_dir_name(file_path)
-    try:
-        os.mkdir(dir_for_files)
-    except OSError as err:
-        logging.error(f"Can't create directory {dir_for_files}. Directory already exists")
-        raise KnownError() from err
-    response = requests.get(link)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    logger.info(f'Downloading resources to {dir_for_files}')
-    with open(file_path, 'r+') as f:
-        items = soup.find_all(tags.keys())
-        if not items:
-            return None
-        bar = ChargingBar('Downloading resources', max=len(items))
-        for item in items:
-            bar.next()
-            parse(link, item, dir_for_files)
-        bar.finish()
-        f.write(soup.prettify())
-
-
-def parse(link: str, item: bs4.element.Tag, dir_for_files: str):
-    url = urlparse(link)
-    value_tag = tags[item.name]
-    item_full_name = get_resource_full_name(link, item)
-    if not item_full_name:
-        return
-    abs_path = os.path.join(dir_for_files, item_full_name)
-    relative_path = os.path.join(get_dir_name(get_name(f'{url.netloc}{url.path}')), item_full_name)
-    tag_link = urljoin(link, item[value_tag])
-    response_tag = get_response(tag_link)
-    try:
-        download_content(abs_path, response_tag.content)
-    except OSError as e:
-        logger.error(f"Can't open file {abs_path}")
-        raise KnownError() from e
-    item[value_tag] = relative_path
+    return response.content

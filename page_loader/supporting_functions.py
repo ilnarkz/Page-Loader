@@ -1,11 +1,12 @@
+import logging
 import os
 import re
 from typing import Union, Optional, Any
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 import bs4.element
-import requests
-from requests import Response
+from bs4 import BeautifulSoup
 
+from page_loader.known_error import KnownError
 
 tags = {'link': 'href',
         'img': 'src',
@@ -47,13 +48,34 @@ def get_resource_full_name(link: str, item: bs4.element.Tag) -> Union[Optional[s
     return item_full_name
 
 
-def download_content(path: str, data: Union[str, bytes]) -> None:
-    mode = 'w'
-    if isinstance(data, bytes):
-        mode = 'wb'
-    with open(path, mode) as tag_content:
-        tag_content.write(data)
+def create_dir(file_path: str):
+    dir_for_files = get_dir_name(file_path)
+    try:
+        os.mkdir(dir_for_files)
+    except OSError as err:
+        logging.error(f"Can't create directory {dir_for_files}. Directory already exists")
+        raise KnownError() from err
+    return dir_for_files
 
 
-def get_response(link: str) -> Response:
-    return requests.get(link)
+def save_page(data: str, file_path: str):
+    with open(file_path, 'w') as f:
+        f.write(data)
+
+
+def parse_page(content: bytes, link: str, dir_for_files: str):
+    soup = BeautifulSoup(content, 'html.parser')
+    items = soup.find_all(tags.keys())
+    resources_links = []
+    for item in items:
+        url = urlparse(link)
+        value_tag = tags[item.name]
+        item_full_name = get_resource_full_name(link, item)
+        if not item_full_name:
+            continue
+        abs_path = os.path.join(dir_for_files, item_full_name)
+        relative_path = os.path.join(get_dir_name(get_name(f'{url.netloc}{url.path}')), item_full_name)
+        tag_link = urljoin(link, item[value_tag])
+        resources_links.append((tag_link, abs_path))
+        item[value_tag] = relative_path
+    return soup.prettify(), resources_links
